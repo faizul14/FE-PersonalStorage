@@ -140,7 +140,7 @@ export default function Dashboard() {
                         // <div className="flex flex-col md:flex-row gap-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                             {filteredFiles.length === 0 ? (
-                                <div className="text-center py-12">
+                                <div className="col-span-full h-full text-center py-12 text-white">
                                     <p className="text-gray-500">Belum ada file</p>
                                 </div>
                             ) : (
