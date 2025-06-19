@@ -42,7 +42,7 @@ export default function FileCard({ file, onDelete }) {
         if (isDeleting) return;
         setIsDeleting(true);
         try {
-            const res = await fetch(`https://be-personalstorage-production.up.railway.app/api/files/${file.id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/${file.id}`, {
                 method: 'DELETE',
             });
             if (!res.ok) throw new Error('Gagal menghapus file');
@@ -60,13 +60,13 @@ export default function FileCard({ file, onDelete }) {
             <div
                 className="relative p-4 bg-white/40 border border-white/50 
                 rounded-xl shadow-sm hover:shadow-md transition-all duration-300
-                hover:bg-white/50 hover:border-white/70"
+                hover:bg-black/5 hover:border-white/70 md:w-95"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap md:flex-nonwrap items-center gap-3">
                     {isImage ? (
-                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white/30">
+                        <div className="relative w-12 h-22 md:w-22 md:h-42 rounded-lg overflow-hidden bg-white/30">
                             <img
                                 src={file.url}
                                 alt={file.name}
@@ -92,12 +92,12 @@ export default function FileCard({ file, onDelete }) {
                         </div>
                     )}
                     <div className="flex-1">
-                        <h3 className="font-medium text-gray-800">{file.name}</h3>
+                        <h3 className="font-medium text-gray-800 text-sm truncate max-w-[160px] sm:max-w-full md:max-w-[160px]">{file.name}</h3>
                         <p className="text-sm text-gray-600">{file.size}</p>
                         <p className="text-xs text-gray-500">{file.date}</p>
                     </div>
                     {isHovered && (
-                        <div className="flex gap-2">
+                        <div className="flex flex-col gap-2 ml-auto">
                             {isImage && (
                                 <button
                                     onClick={handlePreviewClick}
@@ -198,4 +198,4 @@ export default function FileCard({ file, onDelete }) {
             )}
         </>
     );
-} 
+}

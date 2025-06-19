@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 
 // Buat instance axios dengan konfigurasi dasar
 const api = axios.create({
-    baseURL: 'https://be-personalstorage-production.up.railway.app/api',
+    // baseURL: 'https://be-personalstorage-production.up.railway.app/api',
+    baseURL: process.env.NEXT_PUBLIC_BASE_URL,
     timeout: 10000, // timeout 10 detik
     headers: {
         'Content-Type': 'application/json',
@@ -42,7 +43,7 @@ export default function Dashboard() {
         try {
             setIsLoading(true)
             setError(null)
-            const res = await api.get('/files')
+            const res = await api.get('/api/files')
             setFiles(res.data)
         } catch (err) {
             setError('Gagal mengambil data file')
@@ -75,9 +76,9 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+        <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-white">
             {/* Header */}
-            <header className="bg-white/80 backdrop-blur-lg border-b border-gray-100">
+            <header className="bg-white/80 border-b border-gray-100">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center">
                         <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
@@ -93,10 +94,8 @@ export default function Dashboard() {
                 </div>
             </header>
 
-            {/* Main Content */}
-            <main className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
-                {/* Files List Section */}
-                <div className="bg-white/80 backdrop-blur-lg shadow-sm rounded-2xl p-6 border border-gray-100">
+            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="min-h-[75vh] bg-white/80 shadow-sm rounded-2xl p-6 border border-gray-100 pb-12">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                         <h2 className="text-xl font-semibold text-gray-800">Daftar File</h2>
                         <div className="relative w-full sm:w-auto">
@@ -136,7 +135,10 @@ export default function Dashboard() {
                             <p className="text-red-600 text-center">{error}</p>
                         </div>
                     ) : (
-                        <div className="grid gap-4">
+                        // <div className="grid gap-4 ">
+                        // <div className="grid gap-4 md:flex flex-row">
+                        // <div className="flex flex-col md:flex-row gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                             {filteredFiles.length === 0 ? (
                                 <div className="text-center py-12">
                                     <p className="text-gray-500">Belum ada file</p>
@@ -156,8 +158,8 @@ export default function Dashboard() {
                                                 month: 'long',
                                                 day: 'numeric',
                                                 hour: '2-digit',
-                                                minute: '2-digit'
-                                            })
+                                                minute: '2-digit',
+                                            }),
                                         }}
                                         onDelete={handleDeleteFile}
                                     />
@@ -167,7 +169,13 @@ export default function Dashboard() {
                     )}
                 </div>
             </main>
+            <footer className="w-full mt-12 py-6 text-center text-sm text-gray-500">
+                <p>
+                    &copy; {new Date().getFullYear()} <span className="font-semibold text-gray-700">FMP</span> — Personal File Manager by Faezol.
+                </p>
+            </footer>
         </div>
     )
+
 }
 

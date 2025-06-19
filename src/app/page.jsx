@@ -4,7 +4,7 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 
 const api = axios.create({
-  baseURL: 'https://be-personalstorage-production.up.railway.app',
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   timeout: 30000,
   headers: {
     'Accept': '*/*',
@@ -80,35 +80,37 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-800 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="relative">
-          {/* Glass effect background */}
-          <div className="absolute inset-0 bg-gray-700/30  rounded-3xl shadow-2xl border border-gray-600/30"></div>
+    <>
+      <div className="flex flex-col min-h-screen bg-gray-800">
+        <div className="flex flex-grow bg-gray-800  items-center justify-center p-4">
+          <div className="w-full max-w-md">
+            <div className="relative">
+              {/* Glass effect background */}
+              <div className="absolute inset-0 bg-gray-700/30  rounded-3xl shadow-2xl border border-gray-600/30"></div>
 
-          {/* Content */}
-          <div className="relative p-6 sm:p-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white text-center mb-6 sm:mb-8">
-              Ikat File
-            </h1>
+              {/* Content */}
+              <div className="relative p-6 sm:p-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-white text-center mb-6 sm:mb-8">
+                  Ikat File
+                </h1>
 
-            <form onSubmit={handleUpload} className="space-y-6">
-              <div className="space-y-4">
-                <div className="relative">
-                  <input
-                    type="file"
-                    onChange={(e) => {
-                      const selectedFile = e.target.files[0]
-                      if (selectedFile) {
-                        console.log('Selected file:', {
-                          name: selectedFile.name,
-                          type: selectedFile.type,
-                          size: selectedFile.size
-                        })
-                        setFile(selectedFile)
-                      }
-                    }}
-                    className="block w-full text-sm text-white
+                <form onSubmit={handleUpload} className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="relative">
+                      <input
+                        type="file"
+                        onChange={(e) => {
+                          const selectedFile = e.target.files[0]
+                          if (selectedFile) {
+                            console.log('Selected file:', {
+                              name: selectedFile.name,
+                              type: selectedFile.type,
+                              size: selectedFile.size
+                            })
+                            setFile(selectedFile)
+                          }
+                        }}
+                        className="block w-full text-sm text-white
                                         file:mr-4 file:py-2 sm:file:py-3 file:px-4
                                         file:rounded-lg file:border-0
                                         file:text-sm file:font-medium
@@ -116,64 +118,75 @@ export default function UploadPage() {
                                         hover:file:bg-gray-600/70
                                         file:shadow-lg
                                         file:transition-all file:duration-200"
-                    disabled={isLoading}
-                  />
-                </div>
+                        disabled={isLoading}
+                      />
+                    </div>
 
-                {file && (
-                  <div className="bg-gray-700/30 rounded-lg p-3 sm:p-4  border border-gray-600/30">
-                    <p className="text-sm text-white">
-                      Selected file: {file.name}
-                    </p>
-                    <p className="text-xs text-gray-300 mt-1">
-                      Size: {(file.size / 1024).toFixed(2)} KB
-                    </p>
+                    {file && (
+                      <div className="bg-gray-700/30 rounded-lg p-3 sm:p-4  border border-gray-600/30">
+                        <p className="text-sm text-white break-words">
+                          Selected file: {file.name}
+                        </p>
+                        <p className="text-xs text-gray-300 mt-1">
+                          Size: {(file.size / 1024).toFixed(2)} KB
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
 
-              <div className="flex flex-col gap-3 sm:gap-4">
-                <button
-                  type="submit"
-                  className={`w-full py-2 sm:py-3 px-4 rounded-lg text-white font-medium
+                  <div className="flex flex-col gap-3 sm:gap-4">
+                    <button
+                      type="submit"
+                      className={`w-full py-2 sm:py-3 px-4 rounded-lg text-white font-medium
                                     ${isLoading
-                      ? 'bg-gray-600 cursor-not-allowed'
-                      : 'bg-gray-600 hover:bg-gray-500'
-                    }
+                          ? 'bg-gray-600 cursor-not-allowed'
+                          : 'bg-gray-600 hover:bg-gray-500'
+                        }
                                     transition-all duration-200 shadow-lg hover:shadow-xl`}
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Uploading...' : 'Upload File'}
-                </button>
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Uploading...' : 'Upload File'}
+                    </button>
 
-                <button
-                  type="button"
-                  onClick={() => router.push('/dashboard')}
-                  className="w-full py-2 sm:py-3 px-4 rounded-lg text-white 
+                    <button
+                      type="button"
+                      onClick={() => router.push('/dashboard')}
+                      className="w-full py-2 sm:py-3 px-4 rounded-lg text-white 
                                     hover:text-white/90 font-medium
                                     bg-gray-700/30 hover:bg-gray-700/50
                                     transition-all duration-200
                                      border border-gray-600/30"
-                >
-                  Kembali ke Dashboard
-                </button>
+                    >
+                      Kembali ke Dashboard
+                    </button>
+                  </div>
+                  <div className="p-3 sm:p-4 text-center">
+                    <p className="text-white/90 text-sm">Maksimal ukuran file 10MB</p>
+                  </div>
+
+                  {error && (
+                    <div className="p-3 sm:p-4 bg-gray-700/30 rounded-lg  border border-gray-600/30">
+                      <p className="text-white/90 text-sm">{error}</p>
+                    </div>
+                  )}
+
+                  {message && (
+                    <div className="p-3 sm:p-4 bg-gray-700/30 rounded-lg  border border-gray-600/30">
+                      <p className="text-white text-sm">{message}</p>
+                    </div>
+                  )}
+                </form>
               </div>
-
-              {error && (
-                <div className="p-3 sm:p-4 bg-gray-700/30 rounded-lg  border border-gray-600/30">
-                  <p className="text-white/90 text-sm">{error}</p>
-                </div>
-              )}
-
-              {message && (
-                <div className="p-3 sm:p-4 bg-gray-700/30 rounded-lg  border border-gray-600/30">
-                  <p className="text-white text-sm">{message}</p>
-                </div>
-              )}
-            </form>
+            </div>
           </div>
         </div>
+        <footer className="w-full mt-0 py-6 text-center text-sm text-gray-500">
+          <p>
+            &copy; {new Date().getFullYear()} <span className="font-semibold text-gray-700">FMP</span> — Personal File Manager by Faezol.
+          </p>
+        </footer>
+
       </div>
-    </div>
+    </>
   )
 }
