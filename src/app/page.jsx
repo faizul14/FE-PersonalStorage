@@ -11,12 +11,25 @@ const api = axios.create({
   }
 })
 
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers['Bearer'] = token
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
 export default function UploadPage() {
   const [file, setFile] = useState(null)
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const router = useRouter()
+  const [downloadUrl, setDownloadUrl] = useState('');
+
 
   const handleUpload = async (e) => {
     e.preventDefault()
@@ -45,7 +58,7 @@ export default function UploadPage() {
       setError(null)
       console.log('Starting upload...', file.name)
 
-      const response = await api.post('/api/files/upload', formData, {
+      const response = await api.post('/api/public/files/upload', formData, {
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
           console.log('Upload Progress:', percentCompleted)
@@ -54,6 +67,7 @@ export default function UploadPage() {
 
       console.log('Upload response:', response.data)
       setMessage('Upload berhasil!')
+      setDownloadUrl(response.data.url); // Simpan URL dari response upload
       setFile(null)
 
       // Redirect ke halaman utama setelah 2 detik
@@ -175,6 +189,33 @@ export default function UploadPage() {
                       <p className="text-white text-sm">{message}</p>
                     </div>
                   )}
+                  {downloadUrl && (
+                    <div className="p-3 sm:p-4 bg-gray-700/30 rounded-lg border border-gray-600/30 mt-2 text-white/90 text-sm">
+                      <p>Link download:</p>
+                      <div className="mt-1 flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-2">
+                        <div className="flex-1 break-all text-blue-400">
+                          <span className="text-blue-400 cursor-text hover:underline">
+                            {downloadUrl}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(downloadUrl)
+                              .then(() => {
+                                setMessage('Link berhasil disalin!');
+                                setTimeout(() => setMessage('Upload berhasil!'), 2000)
+                              });
+                          }}
+                          className="bg-gray-600 hover:bg-gray-500 text-white text-xs px-3 py-1.5 rounded-md transition-all"
+                        >
+                          Copy
+                        </button>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">Tempel link di browser untuk unduh otomatis</p>
+                    </div>
+                  )}
+
+
                 </form>
               </div>
             </div>

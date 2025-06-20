@@ -42,8 +42,13 @@ export default function FileCard({ file, onDelete }) {
         if (isDeleting) return;
         setIsDeleting(true);
         try {
+            const token = localStorage.getItem('token');
             const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/${file.id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Bearer': token,
+                    'Content-Type': 'application/json'
+                }
             });
             if (!res.ok) throw new Error('Gagal menghapus file');
             if (onDelete) onDelete(file.id);
@@ -151,49 +156,48 @@ export default function FileCard({ file, onDelete }) {
             {/* Image Preview Modal */}
             {showPreview && isImage && (
                 <div
-                    className="fixed inset-0  rounded-xl flex items-center justify-center z-50"
+                    className="fixed inset-0   flex items-center justify-center z-50 bg-black/20"
                     onClick={() => setShowPreview(false)}
                 >
                     <div className="absolute inset-0 flex items-center justify-center p-4">
-                        <div className="relative   max-w-4xl max-h-[80vh] 
-                        bg-white/10 backdrop-blur-md rounded-xl overflow-hidden
-                        border border-white/20 shadow-2xl">
+                        <div className="relative bg-white/10 rounded-xl overflow-hidden border border-white/20 shadow-2xl">
                             {isImageLoading && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/10 z-10">
                                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
                                 </div>
                             )}
                             {imageError ? (
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+                                <div className="flex items-center justify-center bg-black/10 px-8 py-12">
                                     <p className="text-white">Gagal memuat gambar</p>
                                 </div>
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center">
+                                <div className="flex items-center justify-center">
                                     <img
                                         src={file.url}
                                         alt={file.name}
-                                        // className="w-full h-full object-contain"
+                                        className="max-w-full max-h-[80vh] object-contain"
                                         onLoad={() => setIsImageLoading(false)}
                                         onError={() => {
                                             setIsImageLoading(false);
                                             setImageError(true);
                                         }}
                                     />
+                                    <button
+                                        onClick={() => setShowPreview(false)}
+                                        className="absolute top-4 right-4 text-white 
+                    bg-black/20 hover:bg-black/40 rounded-full p-3 
+                    backdrop-blur-md border border-white/10
+                    hover:border-white/20 transition-all duration-200 z-20"
+                                    >
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
                                 </div>
                             )}
                         </div>
                     </div>
-                    <button
-                        onClick={() => setShowPreview(false)}
-                        className="absolute top-4 right-4 text-white 
-                        bg-black/10 hover:bg-black/20 rounded-full p-3 
-                        backdrop-blur-md border border-white/10
-                        hover:border-white/20 transition-all duration-200 z-10"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+
                 </div>
             )}
         </>
