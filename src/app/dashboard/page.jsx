@@ -51,6 +51,7 @@ export default function Dashboard() {
     const [searchTerm, setSearchTerm] = useState('')
     const router = useRouter()
     const [isLoggingOut, setIsLoggingOut] = useState(false)
+    const [isCheckingAuth, setCheckingAuth] = useState(true)
 
 
     const fetchFiles = async () => {
@@ -75,6 +76,7 @@ export default function Dashboard() {
             setError('Gagal mengambil data file')
         } finally {
             setIsLoading(false)
+            setCheckingAuth(false)
         }
     }
 
@@ -107,6 +109,14 @@ export default function Dashboard() {
             localStorage.removeItem('token')
             router.push('/auth/login')
         }, 3000)
+    }
+
+    if (isCheckingAuth) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <p className="text-gray-600">Checking authentication...</p>
+            </div>
+        )
     }
 
     return (
