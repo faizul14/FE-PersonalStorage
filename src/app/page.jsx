@@ -169,7 +169,7 @@ export default function UploadPage() {
                                     hover:text-white/90 font-medium
                                     bg-gray-700/30 hover:bg-gray-700/50
                                     transition-all duration-200
-                                     border border-gray-600/30"
+                                    border border-gray-600/30"
                     >
                       Kembali ke Dashboard
                     </button>
